@@ -38,53 +38,7 @@ void Multiply(Arrays *object, Array *res, int k)
 	}
 }
 
-void Fill(Arrays *object, int k)
-{
-	for (size_t m = 0; m < k; m++)
-	{
-		for (size_t i = 0; i < M; i++)
-		{
-			for (size_t j = 0; j < N; j++)
-			{
-				object[m].arr1[i][j] = rand() % 20;
-			}
-		}
-		for (size_t i = 0; i < N; i++)
-		{
-			for (size_t j = 0; j < L; j++)
-			{
-				object[m].arr2[i][j] = rand() % 20;
-			}
-		}
-	}
-}
-
-void Print_1(ofstream &out, Arrays *object, int k)
-{
-	for (int m = 0; m < k; m++)
-	{
-		for (int i = 0; i < M; i++)
-		{
-			for (int j = 0; j < N; j++)
-			{
-				out << "\t" << object[m].arr1[i][j];				
-			}
-			out << "\n";
-		}
-		out << "\n";
-		for (int i = 0; i < N; i++)
-		{
-			for (int j = 0; j < L; j++)
-			{
-				out << "\t" << object[m].arr2[i][j];
-			}
-			out << "\n";
-		}
-		out << "__________________________________________________\n";		
-	}
-}
-
-void Print_2(ofstream &out2, Array *res, int k)
+void Write_To_File_Result(ofstream &out2, Array *res, int k)
 {
 	for (int m = 0; m < k; m++)
 	{
@@ -100,34 +54,102 @@ void Print_2(ofstream &out2, Array *res, int k)
 	}
 }
 
+void Read_Array(ifstream &fin, Arrays *object, int k)
+{
+	for (size_t i = 0; i < k; i++)
+	{
+		for (size_t j = 0; j < M; j++)
+		{
+			for (size_t m = 0; m < N; m++)
+			{
+				fin >> object[i].arr1[j][m];
+			}
+		}
+
+		for (int n = 0; n < N; n++)
+		{
+			for (int j = 0; j < L; j++)
+			{
+				fin >> object[i].arr2[n][j];
+			}			
+		}
+	}
+}
+
+void Print_Console_file1(Arrays *object, int k)
+{	
+	for (int m = 0; m < k; m++)
+	{
+		for (int i = 0; i < M; i++)
+		{
+			for (int j = 0; j < N; j++)
+			{
+				cout << "\t" << object[m].arr1[i][j];
+			}
+			cout << "\n";
+		}
+		cout << "\n";
+		for (int i = 0; i < N; i++)
+		{
+			for (int j = 0; j < L; j++)
+			{
+				cout << "\t" << object[m].arr2[i][j];
+			}
+			cout << "\n";
+		}
+		cout << "__________________________________________________\n";
+	}
+}
+
+void Print_Console_file2(Array *res, int k)
+{
+	for (int m = 0; m < k; m++)
+	{
+		for (int i = 0; i < M; i++)
+		{
+			for (int j = 0; j < L; j++)
+			{
+				cout << "\t" << res[m].arr[i][j];
+			}
+			cout << "\n";
+		}
+		cout << "__________________________________________________\n";
+	}
+}
+
 int main()
 {
 	srand(time(NULL));
 	ofstream out, out2;
-	out.open("myfile.txt");
-	out2.open("file_2.txt");
-	int k = 0;
-	cout << "Enter k" << endl;
-	cin >> k;
+	ifstream fin;
+	int k = 3;
+
+	fin.open("File_1.txt");
+	out2.open("File_2.txt");
+	
 	Arrays *object = new Arrays[k];
 	Array *res = new Array[k];
 	
-	Fill(object, k);
-	if (!out.is_open())	
-		cout << "Error!" << endl;	
-	else
-	{
-		Print_1(out, object, k);
-	}
-
-	if (!out2.is_open())
+	if (!fin.is_open())
 		cout << "Error!" << endl;
 	else
-	{
-		Multiply(object, res, k);
-		Print_2(out2, res, k);
+	{		
+		Read_Array(fin, object, k);
 	}
-	out.close();
+	fin.close();
+	cout << "Data from the File 1" << endl << endl;
+	Print_Console_file1(object, k);
+
+;	if (!out2.is_open())
+		cout << "Error!" << endl;
+	else
+	{		
+	    Multiply(object, res, k);
+		Write_To_File_Result(out2, res, k);
+		cout << "File writing was successful" << endl;
+		cout << "Data from the File 2" << endl << endl;
+		Print_Console_file2(res, k);
+	}
 	out2.close();
 	system("Pause");
 	return 0;
